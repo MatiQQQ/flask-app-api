@@ -1,0 +1,35 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Load configuration from environment variables
+app.config['DEBUG'] = os.getenv('FLASK_ENV') == 'development'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False').lower() in ('true', '1', 't')
+
+# Initialize extensions
+db = SQLAlchemy(app)
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
+CORS(app)
+
+# Import and register blueprints
+def register_blueprints(app):
+    from routes import init_routes
+    init_routes(app)
+
+register_blueprints(app)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8080)
