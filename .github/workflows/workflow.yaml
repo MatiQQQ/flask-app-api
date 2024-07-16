@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: Lowercased repo owner
+        id: login
+        run: |
+          echo "LOWERCASE_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        shell: bash
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to docker
@@ -36,8 +41,8 @@ jobs:
           push: true
           context: .
           tags: |
-            ghcr.io/${{ github.repository_owner }}/flask-app-api:latest
-            ghcr.io/${{ github.repository_owner }}/flask-app-api:${{ env.tags }}
-            ghcr.io/${{ github.repository_owner }}/flask-app-api:${{ env.sha }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:latest
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:${{ env.tags }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:${{ env.sha }}
       - name: Logout from ghcr.io
         run: docker logout ghcr.io
