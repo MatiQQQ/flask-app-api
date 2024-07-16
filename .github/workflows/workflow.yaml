@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*''
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,7 +44,7 @@ jobs:
           context: .
           tags: |
             ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:latest
-            ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:${{ env.tags }}
             ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:${{ env.sha }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/flask-app-api:${{ env.tags }}
       - name: Logout from ghcr.io
         run: docker logout ghcr.io
