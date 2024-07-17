@@ -28,17 +28,20 @@ jobs:
         id: extract_tags
         run: |
           tags=$(git tag --contains $(git rev-parse HEAD) | tr '\n' ',' | sed 's/,$//')
-          if [ -z "$tags" ]; then
-            tags="latest"
+          if [ -n "$tags" ]; then
+            echo "TAGS_PRESENT=true" >> $GITHUB_ENV
+            echo "tags=$(echo $tags | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          else
+            echo "TAGS_PRESENT=false" >> $GITHUB_ENV
+            echo "tags=latest" >> $GITHUB_ENV
           fi
-          echo "tags=$tags" >> $GITHUB_ENV
       - name: Get Commit SHA
         id: get_sha
         run: echo "sha=${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          push: true
+          push: ${{ env.TAGS_PRESENT == 'true' }}
           platforms: linux/amd64,linux/arm64
           context: .
           tags: |
