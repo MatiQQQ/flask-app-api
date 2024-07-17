@@ -1,9 +1,12 @@
 name: Push Docker Image
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
