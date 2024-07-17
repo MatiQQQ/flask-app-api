@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from dotenv import load_dotenv
+from middlewares.prefix import PrefixMiddleware
 import os
 
 # Load environment variables from .env file
@@ -35,6 +36,7 @@ def register_blueprints(app):
     init_routes(app)
 
 register_blueprints(app)
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
